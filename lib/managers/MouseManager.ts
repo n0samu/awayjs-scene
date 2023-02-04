@@ -360,8 +360,7 @@ export class MouseManager {
 					// no avm1dragging is in process, but current collision
 					// is not the same as collision that appeared on mouse-down,
 					// need to dispatch a MOUSE_UP_OUTSIDE on _mouseDragEntity
-					if ((<any> this._mouseDragCollision.rootNode).buttonEnabled)
-						this.setupAndDispatchEvent(this._mouseOut, event, this._mouseDragCollision);
+					this.setupAndDispatchEvent(this._mouseOut, event, this._mouseDragCollision);
 					if (!this._eventBubbling) {
 						this.setupAndDispatchEvent(this._mouseUpOutside, event, this._mouseDragCollision);
 					}
@@ -433,16 +432,16 @@ export class MouseManager {
 		if (collisionNode != prevCollisionNode) {
 
 			//  If colliding object has changed, queue OVER and OUT events.
-			//  If the mouse is dragged (mouse-down is hold), use DRAG_OVER and DRAG_OUT instead of MOUSE_OVER MOUSE_OUT
+			//  If the mouse is dragged (mouse-down is hold), use DRAG_OVER and DRAG_OUT in addition to MOUSE_OVER MOUSE_OUT
 			//  DRAG_OVER and DRAG_OUT are only dispatched on the object that was hit on the mouse-down
 			// (_mouseDragEntity)
 
 			//  Store the info if the collision is a enabled Button (_collisionIsEnabledButton)
 
 			if (prevCollisionNode) {
-				if (!this._isTouch && !this._mouseDragging)
+				if (!this._isTouch)
 					this.setupAndDispatchEvent(this._mouseOut, this._mouseMoveEvent, this._prevCollision);
-				else if (this._mouseDragging && this._mouseDragCollision
+				if (this._mouseDragging && this._mouseDragCollision
 					&& this._mouseDragCollision.rootNode == prevCollisionNode)
 					this.setupAndDispatchEvent(this._dragOut, this._mouseMoveEvent, this._prevCollision);
 			}
@@ -505,7 +504,7 @@ export class MouseManager {
 			if (this._collisionIsEnabledButton != isActiveButton && isActiveButton) {
 				if (!this._isTouch)
 					this.setupAndDispatchEvent(this._mouseOver, this._mouseMoveEvent, collision);
-				else if (this._mouseDragCollision && this._mouseDragCollision.rootNode == collisionNode)
+				if (this._mouseDragCollision && this._mouseDragCollision.rootNode == collisionNode)
 					this.setupAndDispatchEvent(this._dragOver, this._mouseMoveEvent, collision);
 			}
 
